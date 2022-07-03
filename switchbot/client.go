@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -13,11 +14,11 @@ type response struct {
 }
 
 type body struct {
+	Temperature float32
 	Humidity    float32
-	Temparature float32
 }
 
-func GetMetrics(ctx context.Context, deviceId string, token string) (hum, temp float32, err error) {
+func GetMetrics(ctx context.Context, deviceId string, token string) (temp, hum float32, err error) {
 	r, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
@@ -28,21 +29,31 @@ func GetMetrics(ctx context.Context, deviceId string, token string) (hum, temp f
 		return 0.0, 0.0, err
 	}
 
+	r.Header.Add("Authorization", token)
+
 	resp, err := http.DefaultClient.Do(r)
 	if err != nil {
 		return 0.0, 0.0, err
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return 0.0, 0.0, fmt.Errorf("status: %d", resp.StatusCode)
+	}
+
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return 0.0, 0.0, err
 	}
+
+	log.Println(string(bytes))
 
 	var res response
 	if err = json.Unmarshal(bytes, &res); err != nil {
 		return 0.0, 0.0, err
 	}
 
-	return res.Body.Humidity, res.Body.Temparature, nil
+	log.Println(res)
+
+	return res.Body.Temperature, res.Body.Humidity, nil
 }
