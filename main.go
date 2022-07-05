@@ -19,11 +19,14 @@ func main() {
 
 	http.Handle("/metrics", promhttp.Handler())
 
-	prometheus.Register(&prom.SwitchBotSensorCollector{
+	err := prometheus.Register(&prom.SwitchBotSensorCollector{
 		&switchbot.ClientImpl{
 			Token: c.SwitchBot.Token,
 		},
 	})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if err := http.ListenAndServe(":9199", nil); err != http.ErrServerClosed {
 		log.Fatal(err)
