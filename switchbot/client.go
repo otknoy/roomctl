@@ -18,7 +18,17 @@ type body struct {
 	Humidity    float32
 }
 
-func GetMetrics(ctx context.Context, deviceId string, token string) (temp, hum float32, err error) {
+type Client interface {
+	GetMetrics(ctx context.Context, deviceId string) (temp, hum float32, err error)
+}
+
+var _ Client = (*ClientImpl)(nil)
+
+type ClientImpl struct {
+	Token string
+}
+
+func (c *ClientImpl) GetMetrics(ctx context.Context, deviceId string) (temp, hum float32, err error) {
 	r, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
@@ -29,7 +39,7 @@ func GetMetrics(ctx context.Context, deviceId string, token string) (temp, hum f
 		return 0.0, 0.0, err
 	}
 
-	r.Header.Add("Authorization", token)
+	r.Header.Add("Authorization", c.Token)
 
 	resp, err := http.DefaultClient.Do(r)
 	if err != nil {
