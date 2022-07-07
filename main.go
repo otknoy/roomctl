@@ -19,8 +19,8 @@ func main() {
 
 	http.Handle("/metrics", promhttp.Handler())
 
-	err := prometheus.Register(&prom.SwitchBotSensorCollector{
-		&switchbot.ClientImpl{
+	err = prometheus.Register(&prom.SwitchBotSensorCollector{
+		Client: &switchbot.ClientImpl{
 			Token: c.SwitchBot.Token,
 		},
 	})
