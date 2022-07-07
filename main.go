@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"roomctl/config"
 	"roomctl/prom"
-	"roomctl/switchbot"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -19,12 +18,10 @@ func main() {
 
 	http.Handle("/metrics", promhttp.Handler())
 
-	err = prometheus.Register(&prom.SwitchBotSensorCollector{
-		Client: &switchbot.ClientImpl{
-			Token:    c.SwitchBot.Token,
-			DeviceId: c.SwitchBot.DeviceId,
-		},
-	})
+	err = prometheus.Register(prom.NewCollector(
+		c.SwitchBot.Token,
+		c.SwitchBot.DeviceId,
+	))
 	if err != nil {
 		log.Fatal(err)
 	}
