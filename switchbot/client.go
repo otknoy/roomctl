@@ -19,20 +19,21 @@ type body struct {
 }
 
 type Client interface {
-	GetMetrics(ctx context.Context, deviceId string) (temp, hum float32, err error)
+	GetMetrics(ctx context.Context) (temp, hum float32, err error)
 }
 
 var _ Client = (*ClientImpl)(nil)
 
 type ClientImpl struct {
-	Token string
+	Token    string
+	DeviceId string
 }
 
-func (c *ClientImpl) GetMetrics(ctx context.Context, deviceId string) (temp, hum float32, err error) {
+func (c *ClientImpl) GetMetrics(ctx context.Context) (temp, hum float32, err error) {
 	r, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		fmt.Sprintf("https://api.switch-bot.com/v1.0/devices/%s/status", deviceId),
+		fmt.Sprintf("https://api.switch-bot.com/v1.0/devices/%s/status", c.DeviceId),
 		nil,
 	)
 	if err != nil {

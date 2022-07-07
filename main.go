@@ -21,7 +21,8 @@ func main() {
 
 	err = prometheus.Register(&prom.SwitchBotSensorCollector{
 		Client: &switchbot.ClientImpl{
-			Token: c.SwitchBot.Token,
+			Token:    c.SwitchBot.Token,
+			DeviceId: c.SwitchBot.DeviceId,
 		},
 	})
 	if err != nil {

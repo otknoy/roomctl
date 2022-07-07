@@ -39,9 +39,7 @@ func (c *SwitchBotSensorCollector) Describe(ch chan<- *prometheus.Desc) {
 func (c *SwitchBotSensorCollector) Collect(ch chan<- prometheus.Metric) {
 	ctx := context.Background()
 
-	deviceId := "ED1937346E87"
-
-	temp, hum, err := c.Client.GetMetrics(ctx, deviceId)
+	temp, hum, err := c.Client.GetMetrics(ctx)
 	if err != nil {
 		log.Println(err)
 		return

@@ -11,7 +11,8 @@ type Config struct {
 }
 
 type SwitchBot struct {
-	Token string
+	Token    string
+	DeviceId string
 }
 
 func Load() (*Config, error) {
