@@ -44,7 +44,8 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (temp, hum float32, illu ui
 		return 0, 0, 0, errors.New("empty response")
 	}
 
-	t := tables[0]
+	last := len(tables) - 1
+	t := tables[last]
 
 	return t.Temperature, t.Humidity, uint(t.Illuminance), nil
 }
