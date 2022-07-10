@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+	"roomctl/collector"
 	"roomctl/config"
-	"roomctl/prom"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -18,13 +18,14 @@ func main() {
 
 	http.Handle("/metrics", promhttp.Handler())
 
-	err = prometheus.Register(prom.NewCollector(
+	prometheus.MustRegister(collector.NewSwitchBotSensorCollector(
 		c.SwitchBot.Token,
 		c.SwitchBot.DeviceId,
 	))
-	if err != nil {
-		log.Fatal(err)
-	}
+	prometheus.MustRegister(collector.NewMfLightSensorCollector(
+		c.MfLight.URL,
+		c.MfLight.MobileId,
+	))
 
 	if err := http.ListenAndServe(":9199", nil); err != http.ErrServerClosed {
 		log.Fatal(err)
