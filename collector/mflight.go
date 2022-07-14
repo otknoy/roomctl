@@ -31,7 +31,7 @@ func NewMfLightSensorCollector(url, mobileId string) prometheus.Collector {
 		illuminanceGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 			Namespace:   namespace,
 			Name:        "illuminance",
-			Help:        "multifunction light illuminance",
+			Help:        "illuminance",
 			ConstLabels: labels,
 		}),
 	}
