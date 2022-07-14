@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"roomctl/collector"
@@ -27,7 +28,7 @@ func main() {
 		c.MfLight.MobileId,
 	))
 
-	if err := http.ListenAndServe(":9199", nil); err != http.ErrServerClosed {
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", c.Port), nil); err != http.ErrServerClosed {
 		log.Fatal(err)
 	}
 }

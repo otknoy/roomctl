@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	Port      int
 	SwitchBot SwitchBot
 	MfLight   MfLight
 }
