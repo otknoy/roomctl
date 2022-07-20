@@ -1,0 +1,13 @@
+version: '3'
+services:
+  roomctl:
+    build: .
+    ports:
+      - 9199:9199
+    environment:
+      APP_PORT: 9199
+      APP_SWITCHBOT_TOKEN:    ${APP_SWITCHBOT_TOKEN}
+      APP_SWITCHBOT_DEVICEID: ${APP_SWITCHBOT_DEVICEID}
+      APP_MFLIGHT_URL:        ${APP_MFLIGHT_URL}
+      APP_MFLIGHT_MOBILEID:   ${APP_MFLIGHT_MOBILEID}
+
