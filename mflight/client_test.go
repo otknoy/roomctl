@@ -42,13 +42,13 @@ func TestGetSensorMonitor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if diff := cmp.Diff(float32(22.0), temp); diff != "" {
+	if diff := cmp.Diff(float32(21.9), temp); diff != "" {
 		t.Errorf("response differs.\n%v", diff)
 	}
-	if diff := cmp.Diff(float32(43.3), humi); diff != "" {
+	if diff := cmp.Diff(float32(43.0), humi); diff != "" {
 		t.Errorf("response differs.\n%v", diff)
 	}
-	if diff := cmp.Diff(uint(405), illu); diff != "" {
+	if diff := cmp.Diff(uint(406), illu); diff != "" {
 		t.Errorf("response differs.\n%v", diff)
 	}
 }
