@@ -31,6 +31,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: $(date +%Y%m%d-%H%M%M)
 
       - name: Build and push
         uses: docker/build-push-action@v3
