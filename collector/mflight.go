@@ -60,9 +60,6 @@ func (c *mfLightSensorCollector) Collect(ch chan<- prometheus.Metric) {
 		return
 	}
 
-	log.Println(temp, hum, illu)
-	log.Println(float64(temp), float64(hum), float64(illu))
-
 	c.temperatureGauge.Set(float64(temp))
 	c.humidityGauge.Set(float64(hum))
 	c.illuminanceGauge.Set(float64(illu))

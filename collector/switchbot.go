@@ -52,8 +52,6 @@ func (c *switchBotSensorCollector) Collect(ch chan<- prometheus.Metric) {
 		return
 	}
 
-	log.Println(temp, hum)
-
 	c.temperatureGauge.Set(float64(temp))
 	c.humidityGauge.Set(float64(hum))
 

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -57,14 +56,10 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (temp, hum float32, err err
 		return 0.0, 0.0, err
 	}
 
-	log.Println(string(bytes))
-
 	var res response
 	if err = json.Unmarshal(bytes, &res); err != nil {
 		return 0.0, 0.0, err
 	}
-
-	log.Println(res)
 
 	return res.Body.Temperature, res.Body.Humidity, nil
 }
