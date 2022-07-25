@@ -31,7 +31,10 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: $(date +%Y%m%d-%H%M%M)
+          tags: |
+            type=raw,value={{date 'YYYYMMDD'}}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push
         uses: docker/build-push-action@v3
