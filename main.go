@@ -19,14 +19,18 @@ func main() {
 
 	http.Handle("/metrics", promhttp.Handler())
 
-	prometheus.MustRegister(collector.NewSwitchBotSensorCollector(
-		c.SwitchBot.Token,
-		c.SwitchBot.DeviceId,
-	))
-	prometheus.MustRegister(collector.NewMfLightSensorCollector(
-		c.MfLight.URL,
-		c.MfLight.MobileId,
-	))
+	for _, col := range []prometheus.Collector{
+		collector.NewSwitchBotSensorCollector(
+			c.SwitchBot.Token,
+			c.SwitchBot.DeviceId,
+		),
+		collector.NewMfLightSensorCollector(
+			c.MfLight.URL,
+			c.MfLight.MobileId,
+		),
+	} {
+		prometheus.MustRegister(col)
+	}
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", c.Port), nil); err != http.ErrServerClosed {
 		log.Fatal(err)
