@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"roomctl/mflight"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -52,7 +53,8 @@ func (c *mfLightSensorCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (c *mfLightSensorCollector) Collect(ch chan<- prometheus.Metric) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 
 	temp, hum, illu, err := c.client.GetMetrics(ctx)
 	if err != nil {
