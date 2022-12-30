@@ -12,10 +12,10 @@ func NewSwitchBotSensorCollector(token, deviceId string) prometheus.Collector {
 	labels := prometheus.Labels{"device": "switchbot"}
 
 	return &switchBotSensorCollector{
-		client: &switchbot.ClientImpl{
+		client: switchbot.NewCacheClient(&switchbot.ClientImpl{
 			Token:    token,
 			DeviceId: deviceId,
-		},
+		}),
 		temperatureGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 			Namespace:   namespace,
 			Name:        "temperature",

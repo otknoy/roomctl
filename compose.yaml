@@ -3,7 +3,7 @@ services:
   roomctl:
     build: .
     ports:
-      - 9199:9199
+      - 9299:9199
     environment:
       APP_PORT: 9199
       APP_SWITCHBOT_TOKEN:    ${APP_SWITCHBOT_TOKEN}
