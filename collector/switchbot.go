@@ -8,8 +8,20 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+func NewSwitchBotSensorCollectors(token string, deviceIds []string) []prometheus.Collector {
+	l := make([]prometheus.Collector, len(deviceIds))
+	for i := range l {
+		l[i] = NewSwitchBotSensorCollector(token, deviceIds[i])
+	}
+
+	return l
+}
+
 func NewSwitchBotSensorCollector(token, deviceId string) prometheus.Collector {
-	labels := prometheus.Labels{"device": "switchbot"}
+	labels := prometheus.Labels{
+		"device":   "switchbot",
+		"deviceId": deviceId,
+	}
 
 	return &switchBotSensorCollector{
 		client: switchbot.NewCacheClient(&switchbot.ClientImpl{
