@@ -19,8 +19,8 @@ func main() {
 
 	http.Handle("/metrics", promhttp.Handler())
 
-	for _, col := range []prometheus.Collector{
-		collector.NewSwitchBotSensorCollector(
+	for _, col := range append(
+		collector.NewSwitchBotSensorCollectors(
 			c.SwitchBot.Token,
 			c.SwitchBot.DeviceId,
 		),
@@ -28,7 +28,7 @@ func main() {
 			c.MfLight.URL,
 			c.MfLight.MobileId,
 		),
-	} {
+	) {
 		prometheus.MustRegister(col)
 	}
 

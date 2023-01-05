@@ -14,7 +14,7 @@ type Config struct {
 
 type SwitchBot struct {
 	Token    string
-	DeviceId string
+	DeviceId []string
 }
 
 type MfLight struct {
