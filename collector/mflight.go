@@ -10,7 +10,7 @@ import (
 )
 
 func NewMfLightSensorCollector(url, mobileId string) prometheus.Collector {
-	labels := prometheus.Labels{"device": "mflight", "deviceId": "mflight"}
+	labels := prometheus.Labels{"device": "mflight", "device_id": "mflight"}
 
 	return &mfLightSensorCollector{
 		client: &mflight.ClientImpl{
