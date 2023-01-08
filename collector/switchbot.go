@@ -19,8 +19,8 @@ func NewSwitchBotSensorCollectors(token string, deviceIds []string) []prometheus
 
 func NewSwitchBotSensorCollector(token, deviceId string) prometheus.Collector {
 	labels := prometheus.Labels{
-		"device":   "switchbot",
-		"deviceId": deviceId,
+		"device":    "switchbot",
+		"device_id": deviceId,
 	}
 
 	return &switchBotSensorCollector{
