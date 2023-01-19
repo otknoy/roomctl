@@ -9,17 +9,11 @@ import (
 type Config struct {
 	Port      int
 	SwitchBot SwitchBot
-	MfLight   MfLight
 }
 
 type SwitchBot struct {
 	Token    string
 	DeviceId []string
-}
-
-type MfLight struct {
-	URL      string
-	MobileId string
 }
 
 func Load() (*Config, error) {
