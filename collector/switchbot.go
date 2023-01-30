@@ -8,19 +8,20 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-func NewSwitchBotSensorCollectors(token string, deviceIds []string) []prometheus.Collector {
+func NewSwitchBotSensorCollectors(token string, deviceIds, deviceNames []string) []prometheus.Collector {
 	l := make([]prometheus.Collector, len(deviceIds))
 	for i := range l {
-		l[i] = NewSwitchBotSensorCollector(token, deviceIds[i])
+		l[i] = NewSwitchBotSensorCollector(token, deviceIds[i], deviceNames[i])
 	}
 
 	return l
 }
 
-func NewSwitchBotSensorCollector(token, deviceId string) prometheus.Collector {
+func NewSwitchBotSensorCollector(token, deviceId, deviceName string) prometheus.Collector {
 	labels := prometheus.Labels{
-		"device":    "switchbot",
-		"device_id": deviceId,
+		"device":      "switchbot",
+		"device_id":   deviceId,
+		"device_name": deviceName,
 	}
 
 	return &switchBotSensorCollector{

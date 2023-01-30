@@ -22,6 +22,7 @@ func main() {
 	for _, col := range collector.NewSwitchBotSensorCollectors(
 		c.SwitchBot.Token,
 		c.SwitchBot.DeviceId,
+		c.SwitchBot.DeviceName,
 	) {
 		prometheus.MustRegister(col)
 	}
