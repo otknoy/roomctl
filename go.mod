@@ -2,8 +2,6 @@ module roomctl
 
 go 1.22
 
-toolchain go1.22.6
-
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/prometheus/client_golang v1.19.1
