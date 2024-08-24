@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/prometheus/client_golang v1.20.1
+	github.com/prometheus/client_golang v1.20.2
 )
 
 require (
