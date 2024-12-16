@@ -25,6 +25,7 @@ var _ Client = (*ClientImpl)(nil)
 
 type ClientImpl struct {
 	Token    string
+	Secret   string
 	DeviceId string
 }
 
@@ -32,14 +33,14 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (temp, hum float32, err err
 	r, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		fmt.Sprintf("https://api.switch-bot.com/v1.0/devices/%s/status", c.DeviceId),
+		fmt.Sprintf("https://api.switch-bot.com/v1.1/devices/%s/status", c.DeviceId),
 		nil,
 	)
 	if err != nil {
 		return 0.0, 0.0, err
 	}
 
-	r.Header.Add("Authorization", c.Token)
+	r.Header = makeHeader(c.Token, c.Secret)
 
 	resp, err := http.DefaultClient.Do(r)
 	if err != nil {

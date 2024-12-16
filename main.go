@@ -21,6 +21,7 @@ func main() {
 
 	for _, col := range collector.NewSwitchBotSensorCollectors(
 		c.SwitchBot.Token,
+		c.SwitchBot.Secret,
 		c.SwitchBot.DeviceId,
 		c.SwitchBot.DeviceName,
 	) {
