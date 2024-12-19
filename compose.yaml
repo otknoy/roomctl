@@ -1,4 +1,3 @@
-version: '3'
 services:
   roomctl:
     build: .
@@ -7,5 +6,6 @@ services:
     environment:
       APP_PORT: 9199
       APP_SWITCHBOT_TOKEN:      ${APP_SWITCHBOT_TOKEN}
+      APP_SWITCHBOT_SECRET:     ${APP_SWITCHBOT_SECRET}
       APP_SWITCHBOT_DEVICEID:   ${APP_SWITCHBOT_DEVICEID}
       APP_SWITCHBOT_DEVICENAME: ${APP_SWITCHBOT_DEVICENAME}

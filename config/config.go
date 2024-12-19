@@ -13,6 +13,7 @@ type Config struct {
 
 type SwitchBot struct {
 	Token      string
+	Secret     string
 	DeviceId   []string
 	DeviceName []string
 }
