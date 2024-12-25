@@ -3,7 +3,7 @@ package switchbot
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
+	"encoding/base64"
 	"net/http"
 	"strconv"
 	"time"
@@ -14,12 +14,7 @@ import (
 func makeHeader(token, secret string) http.Header {
 	nonce := uuid.New().String()
 	t := strconv.FormatInt(time.Now().UnixMilli(), 10)
-	sign := func(message, key string) string {
-		h := hmac.New(sha256.New, []byte(key))
-		h.Write([]byte(message))
-		return hex.EncodeToString(h.Sum(nil))
-	}(token+t+nonce, secret)
-
+	sign := hmacSHA256(token+t+nonce, secret)
 	return map[string][]string{
 		"Authorization": {token},
 		"sign":          {sign},
@@ -27,4 +22,10 @@ func makeHeader(token, secret string) http.Header {
 		"t":             {t},
 		"Content-Type":  {"application/json"},
 	}
+}
+
+func hmacSHA256(message, key string) string {
+	h := hmac.New(sha256.New, []byte(key))
+	h.Write([]byte(message))
+	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
