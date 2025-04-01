@@ -46,7 +46,9 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (temp, hum float32, err err
 	if err != nil {
 		return 0.0, 0.0, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return 0.0, 0.0, fmt.Errorf("status: %d", resp.StatusCode)
