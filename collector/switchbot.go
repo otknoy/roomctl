@@ -8,7 +8,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-func NewSwitchBotSensorCollectors(token, secret string, deviceIds, deviceNames []string) []prometheus.Collector {
+func NewSwitchBotSensorCollectors(
+	token, secret string,
+	deviceIds, deviceNames []string,
+) []prometheus.Collector {
 	l := make([]prometheus.Collector, len(deviceIds))
 	for i := range l {
 		l[i] = NewSwitchBotSensorCollector(token, secret, deviceIds[i], deviceNames[i])
