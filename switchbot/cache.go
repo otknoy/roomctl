@@ -37,6 +37,9 @@ func (c *cache) GetMetrics(ctx context.Context) (float32, float32, error) {
 	}
 
 	temp, hum, err := c.c.GetMetrics(ctx)
+	if err != nil {
+		return 0.0, 0.0, err
+	}
 
 	c.set(temp, hum)
 
