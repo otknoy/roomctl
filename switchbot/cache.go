@@ -31,18 +31,26 @@ func NewCacheClient(c Client) Client {
 }
 
 func (c *cache) GetMetrics(ctx context.Context) (float32, float32, error) {
-	if c.expire.After(time.Now()) {
+	if c.isFresh() {
 		t, h := c.get()
 		return t, h, nil
 	}
 
 	temp, hum, err := c.c.GetMetrics(ctx)
+	if err != nil {
+		return 0.0, 0.0, err
+	}
 
-	c.set(temp, hum)
-
-	c.expire = time.Now().Add(c.ttl)
+	c.setMetrics(temp, hum, time.Now().Add(c.ttl))
 
 	return temp, hum, err
+}
+
+func (c *cache) isFresh() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	return c.expire.After(time.Now())
 }
 
 func (c *cache) get() (float32, float32) {
@@ -52,10 +60,11 @@ func (c *cache) get() (float32, float32) {
 	return c.temp, c.hum
 }
 
-func (c *cache) set(temp, hum float32) {
+func (c *cache) setMetrics(temp, hum float32, expire time.Time) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	c.temp = temp
 	c.hum = hum
+	c.expire = expire
 }
