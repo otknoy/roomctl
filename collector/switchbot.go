@@ -28,11 +28,11 @@ func NewSwitchBotSensorCollector(token, secret, deviceId, deviceName string) pro
 	}
 
 	return &switchBotSensorCollector{
-		client: switchbot.NewCacheClient(&switchbot.ClientImpl{
+		client: &switchbot.ClientImpl{
 			Token:    token,
 			Secret:   secret,
 			DeviceId: deviceId,
-		}),
+		},
 		temperatureGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 			Namespace:   namespace,
 			Name:        "temperature",
