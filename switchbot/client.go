@@ -52,7 +52,7 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (*Metrics, error) {
 		return nil, err
 	}
 	defer func() {
-		err = resp.Body.Close()
+		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode != http.StatusOK {
