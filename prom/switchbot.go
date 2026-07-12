@@ -42,16 +42,16 @@ func (c *switchBotSensorCollector) Describe(ch chan<- *prometheus.Desc) {
 func (c *switchBotSensorCollector) Collect(ch chan<- prometheus.Metric) {
 	ctx := context.Background()
 
-	temp, hum, err := c.client.GetMetrics(ctx)
+	m, err := c.client.GetMetrics(ctx)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	log.Println(temp, hum)
+	log.Println(m)
 
-	c.temperatureGauge.Set(float64(temp))
-	c.humidityGauge.Set(float64(hum))
+	c.temperatureGauge.Set(float64(m.Temperature))
+	c.humidityGauge.Set(float64(m.Humidity))
 
 	ch <- c.temperatureGauge
 	ch <- c.humidityGauge

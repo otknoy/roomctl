@@ -14,36 +14,38 @@ type cache struct {
 	ttl time.Duration
 
 	expire time.Time
-	temp   float32
-	hum    float32
+
+	metrics *Metrics
 }
 
 var _ Client = (*cache)(nil)
 
 func NewCacheClient(c Client) Client {
 	return &cache{
-		c:      c,
-		ttl:    60 * time.Second,
-		expire: time.Now(),
-		temp:   0.0,
-		hum:    0.0,
+		c:       c,
+		ttl:     60 * time.Second,
+		expire:  time.Now(),
+		metrics: nil,
 	}
 }
 
-func (c *cache) GetMetrics(ctx context.Context) (float32, float32, error) {
+func (c *cache) GetMetrics(ctx context.Context) (*Metrics, error) {
 	if c.isFresh() {
-		t, h := c.get()
-		return t, h, nil
+		m := c.get()
+		return m, nil
 	}
 
-	temp, hum, err := c.c.GetMetrics(ctx)
+	m, err := c.c.GetMetrics(ctx)
 	if err != nil {
-		return 0.0, 0.0, err
+		return nil, err
 	}
 
-	c.setMetrics(temp, hum, time.Now().Add(c.ttl))
+	c.setMetrics(m, time.Now().Add(c.ttl))
 
-	return temp, hum, err
+	return &Metrics{
+		Temperature: m.Temperature,
+		Humidity:    m.Humidity,
+	}, err
 }
 
 func (c *cache) isFresh() bool {
@@ -53,18 +55,17 @@ func (c *cache) isFresh() bool {
 	return c.expire.After(time.Now())
 }
 
-func (c *cache) get() (float32, float32) {
+func (c *cache) get() *Metrics {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	return c.temp, c.hum
+	return c.metrics
 }
 
-func (c *cache) setMetrics(temp, hum float32, expire time.Time) {
+func (c *cache) setMetrics(m *Metrics, expire time.Time) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	c.temp = temp
-	c.hum = hum
+	c.metrics = m
 	c.expire = expire
 }
