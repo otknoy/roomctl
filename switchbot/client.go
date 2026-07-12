@@ -18,7 +18,7 @@ type body struct {
 }
 
 type Client interface {
-	GetMetrics(ctx context.Context) (temp, hum float32, err error)
+	GetMetrics(ctx context.Context) (*Metrics, error)
 }
 
 var _ Client = (*ClientImpl)(nil)
@@ -29,7 +29,12 @@ type ClientImpl struct {
 	DeviceId string
 }
 
-func (c *ClientImpl) GetMetrics(ctx context.Context) (temp, hum float32, err error) {
+type Metrics struct {
+	Temperature float32
+	Humidity    float32
+}
+
+func (c *ClientImpl) GetMetrics(ctx context.Context) (*Metrics, error) {
 	r, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
@@ -37,32 +42,35 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (temp, hum float32, err err
 		nil,
 	)
 	if err != nil {
-		return 0.0, 0.0, err
+		return nil, err
 	}
 
 	r.Header = makeHeader(c.Token, c.Secret)
 
 	resp, err := http.DefaultClient.Do(r)
 	if err != nil {
-		return 0.0, 0.0, err
+		return nil, err
 	}
 	defer func() {
 		err = resp.Body.Close()
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return 0.0, 0.0, fmt.Errorf("status: %d", resp.StatusCode)
+		return nil, fmt.Errorf("status: %d", resp.StatusCode)
 	}
 
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return 0.0, 0.0, err
+		return nil, err
 	}
 
 	var res response
 	if err = json.Unmarshal(bytes, &res); err != nil {
-		return 0.0, 0.0, err
+		return nil, err
 	}
 
-	return res.Body.Temperature, res.Body.Humidity, nil
+	return &Metrics{
+		Temperature: res.Body.Temperature,
+		Humidity:    res.Body.Humidity,
+	}, nil
 }
