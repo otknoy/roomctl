@@ -9,8 +9,12 @@ import (
 )
 
 type response struct {
-	Body body
+	StatusCode int    `json:"statusCode"`
+	Message    string `json:"message"`
+	Body       body   `json:"body"`
 }
+
+const switchBotAPISuccess = 100
 
 type body struct {
 	Temperature float32
@@ -59,7 +63,11 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (*Metrics, error) {
 		return nil, fmt.Errorf("status: %d", resp.StatusCode)
 	}
 
-	bytes, err := io.ReadAll(resp.Body)
+	return decodeMetrics(resp.Body)
+}
+
+func decodeMetrics(r io.Reader) (*Metrics, error) {
+	bytes, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +75,9 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (*Metrics, error) {
 	var res response
 	if err = json.Unmarshal(bytes, &res); err != nil {
 		return nil, err
+	}
+	if res.StatusCode != switchBotAPISuccess {
+		return nil, fmt.Errorf("switchbot API status %d: %s", res.StatusCode, res.Message)
 	}
 
 	return &Metrics{
