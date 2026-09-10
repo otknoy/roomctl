@@ -6,6 +6,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type response struct {
@@ -15,6 +19,39 @@ type response struct {
 }
 
 const switchBotAPISuccess = 100
+
+var (
+	switchBotHTTPRequestTotal = promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "roomctl",
+		Subsystem: "switchbot",
+		Name:      "http_requests_total",
+		Help:      "Total number of HTTP requests to the SwitchBot API.",
+	}, []string{"code", "method"})
+	switchBotHTTPRequestDuration = promauto.NewHistogramVec(prometheus.HistogramOpts{
+		Namespace: "roomctl",
+		Subsystem: "switchbot",
+		Name:      "http_request_duration_seconds",
+		Help:      "Duration of HTTP requests to the SwitchBot API.",
+	}, []string{"code", "method"})
+	switchBotHTTPInFlight = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: "roomctl",
+		Subsystem: "switchbot",
+		Name:      "http_in_flight_requests",
+		Help:      "Current number of in-flight HTTP requests to the SwitchBot API.",
+	})
+	switchBotHTTPClient = &http.Client{
+		Transport: promhttp.InstrumentRoundTripperInFlight(
+			switchBotHTTPInFlight,
+			promhttp.InstrumentRoundTripperDuration(
+				switchBotHTTPRequestDuration,
+				promhttp.InstrumentRoundTripperCounter(
+					switchBotHTTPRequestTotal,
+					http.DefaultTransport,
+				),
+			),
+		),
+	}
+)
 
 type body struct {
 	Temperature float32
@@ -51,7 +88,7 @@ func (c *ClientImpl) GetMetrics(ctx context.Context) (*Metrics, error) {
 
 	r.Header = makeHeader(c.Token, c.Secret)
 
-	resp, err := http.DefaultClient.Do(r)
+	resp, err := switchBotHTTPClient.Do(r)
 	if err != nil {
 		return nil, err
 	}
