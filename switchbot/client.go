@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -113,6 +114,7 @@ func decodeMetrics(r io.Reader) (*Metrics, error) {
 	if err = json.Unmarshal(bytes, &res); err != nil {
 		return nil, err
 	}
+	log.Printf("SwitchBot API response: status_code=%d temperature=%v humidity=%v", res.StatusCode, res.Body.Temperature, res.Body.Humidity)
 	if res.StatusCode != switchBotAPISuccess {
 		return nil, fmt.Errorf("switchbot API status %d: %s", res.StatusCode, res.Message)
 	}
