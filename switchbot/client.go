@@ -2,7 +2,7 @@ package switchbot
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -55,8 +55,8 @@ var (
 )
 
 type body struct {
-	Temperature float32
-	Humidity    float32
+	Temperature float32 `json:"temperature"`
+	Humidity    float32 `json:"humidity"`
 }
 
 type Client interface {
